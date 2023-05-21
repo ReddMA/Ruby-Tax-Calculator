@@ -1,0 +1,88 @@
+def withHoldingTax(salary)
+    withHoldtax = {incomelvl1:{additional: 0.00, rate: 0.00, compensation: 0.00}, 
+                incomelvl2:{additional: 0.00, rate: 0.15, compensation: 20833.00}, 
+                incomelvl3:{additional: 1875.00, rate: 0.20, compensation: 33333.00}, 
+                incomelvl4:{additional: 8541.80, rate: 0.25, compensation: 66667.00}, 
+                incomelvl5:{additional: 33541.80, rate: 0.30, compensation: 166667.00}, 
+                incomelvl6:{additional: 183541.80, rate: 0.35, compensation: 666667.00}}
+    if salary < 20833.00
+        tax = (salary - withHoldtax[:incomelvl1][:compensation]) * withHoldtax[:incomelvl1][:rate]
+        tax += withHoldtax[:incomelvl1][:additional]
+    elsif salary.between?(20833.00, 33332.00)
+        tax = (salary - withHoldtax[:incomelvl2][:compensation]) * withHoldtax[:incomelvl2][:rate]
+        tax += withHoldtax[:incomelvl2][:additional]       
+    elsif salary.between?(33333.00, 66666.00)
+        tax = (salary - withHoldtax[:incomelvl3][:compensation]) * withHoldtax[:incomelvl3][:rate]
+        tax += withHoldtax[:incomelvl3][:additional]      
+    elsif salary.between?(66667.00, 166666.00)
+        tax = (salary - withHoldtax[:incomelvl4][:compensation]) * withHoldtax[:incomelvl4][:rate]   
+        tax += withHoldtax[:incomelvl4][:additional]   
+    elsif salary.between?(166667.00, 666666.00)
+        tax = (salary - withHoldtax[:incomelvl5][:compensation]) * withHoldtax[:incomelvl5][:rate]  
+        tax += withHoldtax[:incomelvl5][:additional]  
+    else
+        tax = (salary - withHoldtax[:incomelvl6][:compensation]) * withHoldtax[:incomelvl6][:rate] 
+        tax += withHoldtax[:incomelvl6][:additional]      
+    end
+    return tax.round(2) 
+end
+
+def deductions(salary)
+    totalcontributions = 0
+    puts "-------Monthly Contributions------"
+    puts " "
+    if salary.between?(4250.00, 29749.99)
+        sss = salary * 0.045
+    elsif salary < 4250.00
+        sss = 180.00
+    else
+        sss = 1350.00
+    end
+    puts "SSS: ₱#{sss}"
+    puts " "
+
+    if salary >= 90000.00
+        philHealth = 4050.00
+    elsif salary <= 10000.00
+        philHealth = 225.00
+    else
+        philHealth = salary * 0.045 / 2
+    end
+    puts "PhilHealth: ₱#{philHealth}"
+    puts " "
+
+    if salary < 1500.00
+        pagIbig = salary * 0.01
+    elsif salary.between?(1500.00, 5000.00)
+        pagIbig = salary * 0.02
+    else    
+        pagIbig = 5000.00 * 0.02
+    end
+    puts "PagIBIG: ₱#{pagIbig.round(2)}"
+    puts " "
+  
+    totalcontributions = pagIbig + philHealth + sss
+    currentSal = salary - totalcontributions
+    incomeTax = withHoldingTax(currentSal)
+    netPayTax = salary - incomeTax
+    totalDeduc = totalcontributions + incomeTax
+    netPayTotalDeduc = salary - totalDeduc
+    puts "Total Contributions: ₱#{totalcontributions}"
+    puts " "
+    puts "----------Tax Computation----------"
+    puts " "
+    puts "Income Tax: ₱#{incomeTax}"
+    puts " "
+    puts "Net Pay After Tax: ₱#{netPayTax}"
+    puts " "
+    puts "-----------------------------------"
+    puts " "
+    puts "Total Deductions: ₱#{totalDeduc}"
+    puts " "
+    puts "Total Net Pay after Deductions: ₱#{netPayTotalDeduc}"
+end
+
+puts "----------Tax Calculator----------"
+print "Monthly Income: "
+salary = gets.to_f
+deductions(salary)
